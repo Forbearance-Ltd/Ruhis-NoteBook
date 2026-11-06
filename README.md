@@ -1,4 +1,4 @@
-# 🌸 Ruhi Reader
+# 🌸 Ruhi's NoteBook
 ### *Isme Jemim Ruhi Edition — Crafted with Love by Mohammad Abid Miah*
 
 ---
