@@ -1,5 +1,5 @@
 # 🌸 Ruhi's NoteBook
-### *Isme Jemim Ruhi Edition — Crafted with Love by Abid*
+### *Crafted with Love by Abid for Ruhi*
 
 ---
 
