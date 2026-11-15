@@ -13,6 +13,10 @@
   <meta property="og:title" content="🌸 Ruhi's NoteBook — Accessibility & Classroom Pacing Suite">
   <meta property="og:description" content="Empowering readers with Dyslexia & ADHD with dynamic letter spacing, bionic word anchors, line-focus dimming, and ear-soothing narration voices. Built with love by Abid for Ruhi.">
   <meta property="og:image" content="https://jemims-notebook.abid-northsouth-sbe.workers.dev/og-image.jpg">
+  <meta property="og:image:secure_url" content="https://jemims-notebook.abid-northsouth-sbe.workers.dev/og-image.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1024">
+  <meta property="og:image:height" content="499">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
@@ -120,6 +124,19 @@
         </div>
       </div>
 
+      <!-- Navigation Tabs: Classroom Pacer vs Syllable Spelling Studio -->
+      <nav class="flex items-center bg-[#FFF0E6] p-1 rounded-2xl border border-[#FED7AA]/80 shadow-2xs">
+        <button id="tabReaderBtn" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition shadow-xs bg-white text-[#9A3412] border border-[#FED7AA]">
+          <span>🌸</span>
+          <span>Classroom Reader</span>
+        </button>
+        <button id="tabSpellingBtn" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold text-stone-600 hover:text-[#9A3412] transition">
+          <span>🧩</span>
+          <span>Syllable Spelling Studio</span>
+          <span class="text-[10px] px-1.5 py-0.2 rounded-full bg-[#FB923C] text-white font-bold tracking-wide">NEW</span>
+        </button>
+      </nav>
+
       <!-- Mode Status & Fullscreen -->
       <div class="flex items-center gap-3">
         <div id="statusPill" class="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFF0E6] border border-[#FED7AA]/80 text-xs font-medium text-stone-700 shadow-xs">
@@ -133,8 +150,8 @@
     </div>
   </header>
 
-  <!-- Main Container: Exactly half the side space of the previous margin, perfectly centered and balanced -->
-  <div class="flex-1 w-full max-w-[1540px] mx-auto px-4 lg:px-6 py-3 flex flex-col lg:flex-row gap-5 overflow-hidden min-h-0">
+  <!-- View 1: Classroom Pacer & Reader -->
+  <div id="readerView" class="view-panel flex-1 w-full max-w-[1540px] mx-auto px-4 lg:px-6 py-3 flex flex-col lg:flex-row gap-5 overflow-hidden min-h-0">
 
     <!-- Left Controls Panel: Compact, all settings visible simultaneously without scrolling -->
     <aside class="w-full lg:w-[390px] xl:w-[410px] flex-shrink-0 flex flex-col gap-3 justify-between overflow-y-auto lg:overflow-visible">
@@ -357,6 +374,153 @@
         <div class="flex items-center gap-3">
           <span>💡 <strong>Tip:</strong> Press <kbd class="px-2 py-0.5 rounded-md bg-white border border-[#F5E0D3] text-[#431407] font-mono text-[11px] shadow-2xs">Spacebar</kbd> to Start/Pause</span>
           <span class="hidden sm:inline">Click any word to anchor there</span>
+        </div>
+        <div class="text-[11px] text-[#C2410C] font-semibold flex items-center gap-1 bg-[#FFF0E6] px-3 py-0.5 rounded-full border border-[#FED7AA]/60">
+          <span>Built with love by Abid for Ruhi</span>
+          <span class="text-rose-500">❤️</span>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- View 2: Syllable Spelling Studio (Orton-Gillingham Sound-Box Lab) -->
+  <div id="spellingView" class="view-panel hidden flex-1 w-full max-w-[1540px] mx-auto px-4 lg:px-6 py-3 flex flex-col lg:flex-row gap-5 overflow-hidden min-h-0">
+
+    <!-- Left Controls Panel -->
+    <aside class="w-full lg:w-[390px] xl:w-[410px] flex-shrink-0 flex flex-col gap-3 justify-between overflow-y-auto lg:overflow-visible">
+
+      <!-- Card 1: Syllable Chunking Input & Mode -->
+      <div class="bg-white/95 border border-[#F5E0D3] rounded-2xl p-4 shadow-xs space-y-3">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xs font-bold text-stone-700 uppercase tracking-wider flex items-center gap-1.5">
+            <span>🧩</span> Syllable Studio Engine
+          </h2>
+          <span class="text-[10px] font-bold bg-[#FEF3C7] text-[#92400E] border border-[#FDE68A] px-2 py-0.5 rounded-full">
+            Orton-Gillingham
+          </span>
+        </div>
+
+        <!-- Mode Toggle: Study vs Quiz -->
+        <div class="grid grid-cols-2 gap-1.5 p-1 bg-[#FFF0E6] rounded-xl border border-[#F5E0D3]">
+          <button id="spellingModeStudyBtn" class="py-1.5 px-2 rounded-lg text-xs font-bold transition shadow-xs bg-white text-[#9A3412] border border-[#FED7AA] flex items-center justify-center gap-1">
+            <span>📖</span> Chunk Study
+          </button>
+          <button id="spellingModeQuizBtn" class="py-1.5 px-2 rounded-lg text-xs font-semibold text-stone-600 hover:text-[#9A3412] transition flex items-center justify-center gap-1">
+            <span>🎯</span> Spelling Quiz
+          </button>
+        </div>
+
+        <!-- Input Textarea -->
+        <div class="space-y-1">
+          <div class="flex justify-between items-center text-[11px] font-semibold text-stone-600">
+            <span>Type words or paste text:</span>
+            <span id="spellingWordCount" class="text-stone-400 font-normal">8 words</span>
+          </div>
+          <textarea id="spellingInput" rows="3" class="w-full p-2.5 rounded-xl border border-[#F5E0D3] bg-[#FFFBF8] text-stone-800 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-[#FB923C]/40 focus:border-[#FB923C] transition resize-none leading-relaxed" placeholder="Type words here...">beautiful definitely tomorrow accommodation necessary rhythm Wednesday schedule</textarea>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="grid grid-cols-3 gap-2">
+          <button id="chunkWordsBtn" class="col-span-2 py-2 px-3 rounded-xl font-bold text-xs bg-gradient-to-r from-[#FED7AA] via-[#FDBA74] to-[#FCA5A5] hover:from-[#FDBA74] hover:to-[#FB923C] text-[#431407] border border-[#FDBA74] shadow-xs active:scale-98 transition flex items-center justify-center gap-1.5">
+            <span>✨</span> Break Into Chunks
+          </button>
+          <button id="clearSpellingInputBtn" class="py-2 px-2 rounded-xl text-xs font-semibold bg-[#FFF6F0] hover:bg-[#FFEFE6] text-stone-700 border border-[#F5E0D3] transition flex items-center justify-center gap-1">
+            <span>🗑️</span> Clear
+          </button>
+        </div>
+
+        <!-- Speech Settings for Chunks -->
+        <div class="pt-1.5 border-t border-[#F5E0D3]/60 flex items-center justify-between text-xs text-stone-600">
+          <span class="text-[11px] font-medium flex items-center gap-1">
+            <span>🎙️</span> Pronunciation Speed:
+          </span>
+          <div class="flex items-center gap-1">
+            <button id="audioSpeedSlow" class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-[#FFEDD5] text-[#9A3412] border border-[#FED7AA]">0.8x Slow</button>
+            <button id="audioSpeedNormal" class="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-[#FFF6F0] text-stone-600 hover:bg-[#FFEFE6] border border-[#F5E0D3]">1.0x Normal</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Curated Tricky Word Banks -->
+      <div class="bg-white/95 border border-[#F5E0D3] rounded-2xl p-3.5 shadow-xs space-y-2.5">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xs font-bold text-stone-700 uppercase tracking-wider flex items-center gap-1.5">
+            <span>📚</span> Ruhi's Tricky Word Banks
+          </h2>
+          <span class="text-[10px] text-stone-400">Click to chunk</span>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="flex gap-1 border-b border-[#F5E0D3]/70 pb-1.5">
+          <button id="bankTabEveryday" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[#FFEDD5] text-[#9A3412] border border-[#FED7AA] transition">Everyday</button>
+          <button id="bankTabAcademic" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold text-stone-600 hover:text-[#9A3412] hover:bg-[#FFF6F0] border border-transparent transition">Academic</button>
+          <button id="bankTabConfusing" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold text-stone-600 hover:text-[#9A3412] hover:bg-[#FFF6F0] border border-transparent transition">Tricky Pairs</button>
+        </div>
+
+        <!-- Word Pills Container -->
+        <div id="wordBankPillsContainer" class="flex flex-wrap gap-1.5 max-h-[105px] overflow-y-auto pr-1">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+
+      <!-- Card 3: Visual Sound-Box Style -->
+      <div class="bg-white/95 border border-[#F5E0D3] rounded-2xl p-3.5 shadow-xs space-y-2">
+        <h2 class="text-xs font-bold text-stone-700 uppercase tracking-wider flex items-center gap-1.5">
+          <span>🎨</span> Sound-Box Palette
+        </h2>
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <button id="palettePastelBtn" class="py-1.5 px-2 rounded-xl font-bold bg-[#FFF0E6] text-[#9A3412] border border-[#FED7AA] transition flex items-center justify-center gap-1.5">
+            <span>🌸</span> Velvet Pastel
+          </button>
+          <button id="paletteHighContrastBtn" class="py-1.5 px-2 rounded-xl font-semibold bg-[#FFF6F0] text-stone-600 hover:bg-[#FFEFE6] border border-[#F5E0D3] transition flex items-center justify-center gap-1.5">
+            <span>✨</span> High Focus
+          </button>
+        </div>
+        <p class="text-[10px] text-stone-500 leading-tight">
+          Letters inside sound boxes are spaced with distinct boundaries to eliminate visual crowding and letter-flipping.
+        </p>
+      </div>
+
+    </aside>
+
+    <!-- Right Main Interactive Paper for Chunks -->
+    <main class="flex-1 flex flex-col bg-white/95 border border-[#F5E0D3] rounded-2xl shadow-xs overflow-hidden min-h-0">
+
+      <!-- Top Canvas Action Bar -->
+      <div class="flex-shrink-0 px-4 py-2.5 border-b border-[#F5E0D3] bg-white flex flex-wrap items-center justify-between gap-2 z-10">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold text-stone-700 flex items-center gap-1.5">
+            <span>🔤</span> <span id="spellingHeaderTitle">Orton-Gillingham Syllable Sound-Boxes</span>
+          </span>
+          <span id="syllablesBadge" class="text-[11px] font-semibold bg-[#FEF3C7] text-[#92400E] border border-[#FDE68A] px-2 py-0.5 rounded-full">
+            8 Words • 21 Chunks
+          </span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="readAllChunksBtn" class="py-1.5 px-3 rounded-xl text-xs font-bold bg-[#FFEDD5] hover:bg-[#FED7AA] text-[#9A3412] border border-[#FED7AA] transition shadow-2xs flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            <span>Read All Chunks Aloud</span>
+          </button>
+          <button id="copyHyphenatedBtn" class="py-1.5 px-2.5 rounded-xl text-xs font-semibold bg-[#FFF6F0] hover:bg-[#FFEFE6] text-stone-700 border border-[#F5E0D3] transition flex items-center gap-1">
+            <span>📋</span> Copy Chunks
+          </button>
+        </div>
+      </div>
+
+      <!-- Scrollable Spelling Sound-Box Canvas -->
+      <div id="spellingPaper" class="flex-1 bg-[#FFF0E5] p-4 lg:p-6 overflow-y-auto selection:bg-[#FED7AA] transition-colors duration-200">
+        <div id="spellingCardsContainer" class="max-w-4xl mx-auto space-y-3.5">
+          <!-- Populated dynamically: Cards with isolated pastel sound-boxes -->
+        </div>
+      </div>
+
+      <!-- Bottom Tip & Dedication Bar (Static Bottom) -->
+      <div class="flex-shrink-0 flex flex-wrap items-center justify-between text-xs text-stone-500 px-4 py-1.5 font-medium border-t border-[#F5E0D3] bg-white">
+        <div class="flex items-center gap-2">
+          <span>💡 <strong>Dyslexia Strategy:</strong> Click any sound box to hear it. Master words beat-by-beat.</span>
         </div>
         <div class="text-[11px] text-[#C2410C] font-semibold flex items-center gap-1 bg-[#FFF0E6] px-3 py-0.5 rounded-full border border-[#FED7AA]/60">
           <span>Built with love by Abid for Ruhi</span>
@@ -1008,6 +1172,707 @@ With a peaceful smile, she began to read. Her voice was steady, clear, and full 
     applyTint(currentTint);
     setupSpeechRecognition();
     formatAndRenderText(currentRawText);
+
+    // ==========================================
+    // 🧩 TAB NAVIGATION: READER vs SPELLING STUDIO
+    // ==========================================
+    const tabReaderBtn = document.getElementById('tabReaderBtn');
+    const tabSpellingBtn = document.getElementById('tabSpellingBtn');
+    const readerView = document.getElementById('readerView');
+    const spellingView = document.getElementById('spellingView');
+
+    function setActiveTab(tab) {
+      if (tab === 'spelling') {
+        readerView.classList.add('hidden');
+        spellingView.classList.remove('hidden');
+
+        // Style buttons
+        tabSpellingBtn.className = 'flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition shadow-xs bg-white text-[#9A3412] border border-[#FED7AA]';
+        tabReaderBtn.className = 'flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold text-stone-600 hover:text-[#9A3412] transition';
+
+        statusText.innerText = "Syllable Spelling Studio 🧩 Orton-Gillingham Mode";
+        localStorage.setItem('ruhi_active_tab', 'spelling');
+
+        // Stop any active reader speech or pacing
+        if (isPlaying) togglePacer();
+        if (isShadowReading) stopShadowReading();
+        if (isMicActive) toggleMicPractice();
+
+        renderChunkCards();
+      } else {
+        spellingView.classList.add('hidden');
+        readerView.classList.remove('hidden');
+
+        // Style buttons
+        tabReaderBtn.className = 'flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition shadow-xs bg-white text-[#9A3412] border border-[#FED7AA]';
+        tabSpellingBtn.className = 'flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold text-stone-600 hover:text-[#9A3412] transition';
+
+        statusText.innerText = "Welcome, Ruhi ✨ Ready for class";
+        localStorage.setItem('ruhi_active_tab', 'reader');
+
+        // Stop spelling audio if running
+        stopSequentialSpellingAudio();
+      }
+    }
+
+    tabReaderBtn.addEventListener('click', () => setActiveTab('reader'));
+    tabSpellingBtn.addEventListener('click', () => setActiveTab('spelling'));
+
+    // ==========================================
+    // 🧩 ORTON-GILLINGHAM SYLLABLE ENGINE & DICTIONARY
+    // ==========================================
+    const syllableDict = {
+      // High-frequency tricky everyday & university words
+      "beautiful": ["beau", "ti", "ful"],
+      "definitely": ["def", "i", "nite", "ly"],
+      "tomorrow": ["to", "mor", "row"],
+      "wednesday": ["Wed", "nes", "day"],
+      "calendar": ["cal", "en", "dar"],
+      "february": ["Feb", "ru", "ar", "y"],
+      "receive": ["re", "ceive"],
+      "friend": ["friend"],
+      "because": ["be", "cause"],
+      "enough": ["e", "nough"],
+      "necessary": ["nec", "es", "sar", "y"],
+      "accommodation": ["ac", "com", "mo", "da", "tion"],
+      "environment": ["en", "vi", "ron", "ment"],
+      "government": ["gov", "ern", "ment"],
+      "pronunciation": ["pro", "nun", "ci", "a", "tion"],
+      "recommend": ["rec", "om", "mend"],
+      "discipline": ["dis", "ci", "pline"],
+      "hierarchy": ["hi", "er", "ar", "chy"],
+      "psychology": ["psy", "chol", "o", "gy"],
+      "maintenance": ["main", "te", "nance"],
+      "schedule": ["sched", "ule"],
+      "rhythm": ["rhythm"],
+      "separate": ["sep", "a", "rate"],
+      "business": ["busi", "ness"],
+      "embarrass": ["em", "bar", "rass"],
+      "restaurant": ["res", "tau", "rant"],
+      "library": ["li", "brar", "y"],
+      "knowledge": ["knowl", "edge"],
+      "successful": ["suc", "cess", "ful"],
+      "occurred": ["oc", "curred"],
+      "parallel": ["par", "al", "lel"],
+      "independent": ["in", "de", "pen", "dent"],
+      "experience": ["ex", "pe", "ri", "ence"],
+      "university": ["u", "ni", "ver", "si", "ty"],
+      "classroom": ["class", "room"],
+      "presentation": ["pres", "en", "ta", "tion"],
+      "confidence": ["con", "fi", "dence"],
+      "challenge": ["chal", "lenge"],
+      "curiosity": ["cu", "ri", "os", "i", "ty"],
+      "perspective": ["per", "spec", "tive"],
+      "strength": ["strength"],
+      "practice": ["prac", "tice"],
+      "important": ["im", "por", "tant"],
+      "language": ["lan", "guage"],
+      "dyslexia": ["dys", "lex", "i", "a"],
+      "attention": ["at", "ten", "tion"],
+      "notebook": ["note", "book"],
+      "together": ["to", "geth", "er"],
+      "journey": ["jour", "ney"],
+      "patience": ["pa", "tience"],
+      "wisdom": ["wis", "dom"],
+      "wonderful": ["won", "der", "ful"],
+      "comfortable": ["com", "fort", "a", "ble"],
+      "beginning": ["be", "gin", "ning"],
+      "believe": ["be", "lieve"],
+      "foreign": ["for", "eign"],
+      "height": ["height"],
+      "weird": ["weird"],
+      "neighbor": ["neigh", "bor"],
+      "guarantee": ["guar", "an", "tee"],
+      "colleague": ["col", "league"],
+      "judgment": ["judg", "ment"],
+      "argument": ["ar", "gu", "ment"],
+      "acquire": ["ac", "quire"],
+      "exaggerate": ["ex", "ag", "ger", "ate"],
+      "harass": ["ha", "rass"],
+      "millennium": ["mil", "len", "ni", "um"],
+      "noticeable": ["no", "tice", "a", "ble"],
+      "possession": ["pos", "ses", "sion"],
+      "privilege": ["priv", "i", "lege"],
+      "questionnaire": ["ques", "tion", "naire"],
+      "weather": ["weath", "er"],
+      "whether": ["wheth", "er"],
+      "affect": ["af", "fect"],
+      "effect": ["ef", "fect"],
+      "accept": ["ac", "cept"],
+      "except": ["ex", "cept"],
+      "principal": ["prin", "ci", "pal"],
+      "principle": ["prin", "ci", "ple"],
+      "loose": ["loose"],
+      "lose": ["lose"],
+      "their": ["their"],
+      "there": ["there"],
+      "they're": ["they're"],
+      "writing": ["writ", "ing"],
+      "written": ["writ", "ten"],
+      "disappear": ["dis", "ap", "pear"],
+      "disappoint": ["dis", "ap", "point"],
+      "conscience": ["con", "science"],
+      "conscious": ["con", "scious"],
+      "occur": ["oc", "cur"],
+      "until": ["un", "til"],
+      "truly": ["tru", "ly"],
+      "completely": ["com", "plete", "ly"],
+      "finally": ["fi", "nal", "ly"],
+      "especially": ["es", "pe", "cial", "ly"],
+      "generally": ["gen", "er", "al", "ly"],
+      "definitely": ["def", "i", "nite", "ly"],
+      "immediately": ["im", "me", "di", "ate", "ly"],
+      "sincerely": ["sin", "cere", "ly"],
+      "occasion": ["oc", "ca", "sion"],
+      "profession": ["pro", "fes", "sion"],
+      "possession": ["pos", "ses", "sion"],
+      "success": ["suc", "cess"]
+    };
+
+    // Algorithmic Orton-Gillingham Syllable Division Fallback
+    function splitWordIntoSyllables(rawWord) {
+      // Separate punctuation from word
+      const match = rawWord.match(/^([^a-zA-Z0-9']*)([a-zA-Z0-9']+)([^a-zA-Z0-9']*)$/);
+      if (!match) return [rawWord];
+      const leadPunct = match[1];
+      const word = match[2];
+      const trailPunct = match[3];
+
+      const lower = word.toLowerCase();
+      let chunks = [];
+
+      if (syllableDict[lower]) {
+        // Keep matching original case capitalization
+        const isCap = word[0] === word[0].toUpperCase() && word[0] !== word[0].toLowerCase();
+        chunks = syllableDict[lower].map((c, i) => {
+          if (i === 0 && isCap) {
+            return c.charAt(0).toUpperCase() + c.slice(1);
+          }
+          return c;
+        });
+      } else {
+        // Rule-based division
+        if (word.length <= 4) {
+          chunks = [word];
+        } else {
+          // Orton-Gillingham VCCV, prefixes, suffixes & VCV rules
+          let w = word;
+          let prefixChunk = null;
+          let suffixChunk = null;
+
+          const commonPrefixes = ["inter", "trans", "super", "under", "over", "anti", "pre", "pro", "dis", "mis", "non", "sub", "un", "re"];
+          for (let p of commonPrefixes) {
+            if (w.toLowerCase().startsWith(p) && w.length > p.length + 2) {
+              prefixChunk = w.slice(0, p.length);
+              w = w.slice(p.length);
+              break;
+            }
+          }
+
+          const commonSuffixes = ["tion", "sion", "ment", "ness", "less", "able", "ible", "ful", "ing", "est", "ous", "ed", "er", "ly"];
+          for (let s of commonSuffixes) {
+            if (w.toLowerCase().endsWith(s) && w.length > s.length + 2) {
+              suffixChunk = w.slice(w.length - s.length);
+              w = w.slice(0, w.length - s.length);
+              break;
+            }
+          }
+
+          // Divide remainder by double consonants or VCCV
+          const vccvMatches = [];
+          const vowels = "aeiouyAEIOUY";
+          let currentPiece = "";
+          for (let i = 0; i < w.length; i++) {
+            currentPiece += w[i];
+            const isDouble = (i < w.length - 2 && w[i].toLowerCase() === w[i+1].toLowerCase() && !vowels.includes(w[i]));
+            const isVCCV = (i > 0 && i < w.length - 2 && vowels.includes(w[i-1]) && !vowels.includes(w[i]) && !vowels.includes(w[i+1]) && vowels.includes(w[i+2]));
+            if ((isDouble || isVCCV) && currentPiece.length >= 2 && (w.length - i) >= 2) {
+              vccvMatches.push(currentPiece);
+              currentPiece = "";
+            }
+          }
+          if (currentPiece.length > 0) vccvMatches.push(currentPiece);
+
+          chunks = [];
+          if (prefixChunk) chunks.push(prefixChunk);
+          chunks.push(...vccvMatches);
+          if (suffixChunk) chunks.push(suffixChunk);
+          if (chunks.length === 0) chunks = [word];
+        }
+      }
+
+      // Reattach punctuation to outer chunks
+      if (leadPunct && chunks.length > 0) chunks[0] = leadPunct + chunks[0];
+      if (trailPunct && chunks.length > 0) chunks[chunks.length - 1] = chunks[chunks.length - 1] + trailPunct;
+
+      return chunks;
+    }
+
+    // ==========================================
+    // 🧩 WORD BANKS & PILLS
+    // ==========================================
+    const wordBanks = {
+      everyday: [
+        "beautiful", "definitely", "tomorrow", "Wednesday", "calendar", "February",
+        "receive", "friend", "because", "enough", "schedule", "separate", "business", "library", "rhythm"
+      ],
+      academic: [
+        "accommodation", "necessary", "environment", "government", "pronunciation", "recommend",
+        "discipline", "hierarchy", "psychology", "maintenance", "perspective", "university", "presentation", "independent"
+      ],
+      confusing: [
+        "affect", "effect", "accept", "except", "principal", "principle",
+        "weather", "whether", "loose", "lose", "their", "there", "they're"
+      ]
+    };
+
+    let activeBankCategory = 'everyday';
+    const bankTabEveryday = document.getElementById('bankTabEveryday');
+    const bankTabAcademic = document.getElementById('bankTabAcademic');
+    const bankTabConfusing = document.getElementById('bankTabConfusing');
+    const wordBankPillsContainer = document.getElementById('wordBankPillsContainer');
+
+    function renderWordBankPills() {
+      wordBankPillsContainer.innerHTML = '';
+      const list = wordBanks[activeBankCategory] || [];
+      list.forEach(w => {
+        const btn = document.createElement('button');
+        btn.className = 'px-2 py-0.5 rounded-lg text-xs font-medium bg-[#FFF0E6] hover:bg-[#FED7AA] text-stone-700 hover:text-[#9A3412] border border-[#FED7AA]/80 transition shadow-2xs active:scale-95';
+        btn.innerText = w;
+        btn.addEventListener('click', () => {
+          spellingInput.value = w;
+          renderChunkCards();
+        });
+        wordBankPillsContainer.appendChild(btn);
+      });
+    }
+
+    function setBankCategory(cat) {
+      activeBankCategory = cat;
+      const tabs = [
+        { el: bankTabEveryday, name: 'everyday' },
+        { el: bankTabAcademic, name: 'academic' },
+        { el: bankTabConfusing, name: 'confusing' }
+      ];
+      tabs.forEach(t => {
+        if (t.name === cat) {
+          t.el.className = 'px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[#FFEDD5] text-[#9A3412] border border-[#FED7AA] transition';
+        } else {
+          t.el.className = 'px-2.5 py-1 rounded-lg text-[11px] font-semibold text-stone-600 hover:text-[#9A3412] hover:bg-[#FFF6F0] border border-transparent transition';
+        }
+      });
+      renderWordBankPills();
+    }
+
+    bankTabEveryday.addEventListener('click', () => setBankCategory('everyday'));
+    bankTabAcademic.addEventListener('click', () => setBankCategory('academic'));
+    bankTabConfusing.addEventListener('click', () => setBankCategory('confusing'));
+
+    // ==========================================
+    // 🧩 SPELLING STATE & PALETTE SETTINGS
+    // ==========================================
+    let spellingMode = 'study'; // 'study' | 'quiz'
+    let spellingAudioSpeed = 0.8;
+    let soundBoxPalette = 'pastel'; // 'pastel' | 'contrast'
+    let isSequentialAudioPlaying = false;
+    let sequentialAudioIndex = 0;
+    let sequentialTimeouts = [];
+
+    const spellingInput = document.getElementById('spellingInput');
+    const spellingWordCount = document.getElementById('spellingWordCount');
+    const chunkWordsBtn = document.getElementById('chunkWordsBtn');
+    const clearSpellingInputBtn = document.getElementById('clearSpellingInputBtn');
+    const spellingModeStudyBtn = document.getElementById('spellingModeStudyBtn');
+    const spellingModeQuizBtn = document.getElementById('spellingModeQuizBtn');
+    const audioSpeedSlow = document.getElementById('audioSpeedSlow');
+    const audioSpeedNormal = document.getElementById('audioSpeedNormal');
+    const palettePastelBtn = document.getElementById('palettePastelBtn');
+    const paletteHighContrastBtn = document.getElementById('paletteHighContrastBtn');
+    const spellingHeaderTitle = document.getElementById('spellingHeaderTitle');
+    const syllablesBadge = document.getElementById('syllablesBadge');
+    const readAllChunksBtn = document.getElementById('readAllChunksBtn');
+    const copyHyphenatedBtn = document.getElementById('copyHyphenatedBtn');
+    const spellingCardsContainer = document.getElementById('spellingCardsContainer');
+
+    // Pastel box palette cycles
+    const pastelColors = [
+      { bg: '#FFEDD5', border: '#FDBA74', text: '#9A3412', label: '#C2410C' }, // Apricot
+      { bg: '#FFF0E5', border: '#FED7AA', text: '#831843', label: '#9D174D' }, // Peach
+      { bg: '#F3E8FF', border: '#D8B4FE', text: '#6B21A8', label: '#7E22CE' }, // Lilac
+      { bg: '#DCFCE7', border: '#86EFAC', text: '#166534', label: '#15803D' }  // Matcha
+    ];
+
+    const contrastColors = [
+      { bg: '#FFFFFF', border: '#FB923C', text: '#1C1917', label: '#9A3412' },
+      { bg: '#FFFFFF', border: '#D97706', text: '#1C1917', label: '#B45309' },
+      { bg: '#FFFFFF', border: '#9333EA', text: '#1C1917', label: '#7E22CE' },
+      { bg: '#FFFFFF', border: '#16A34A', text: '#1C1917', label: '#15803D' }
+    ];
+
+    function speakSound(text, rate = 0.8) {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const clean = text.replace(/[^a-zA-Z']/g, '');
+      if (!clean) return;
+      const u = new SpeechSynthesisUtterance(clean);
+      u.rate = rate;
+      u.pitch = 1.0;
+      u.lang = 'en-US';
+      window.speechSynthesis.speak(u);
+    }
+
+    function stopSequentialSpellingAudio() {
+      isSequentialAudioPlaying = false;
+      sequentialTimeouts.forEach(t => clearTimeout(t));
+      sequentialTimeouts = [];
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      readAllChunksBtn.innerHTML = `
+        <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <span>Read All Chunks Aloud</span>
+      `;
+      // remove highlight from all tiles
+      document.querySelectorAll('.active-chunk-highlight').forEach(el => {
+        el.classList.remove('active-chunk-highlight', 'ring-3', 'ring-[#FB923C]', 'scale-105');
+      });
+    }
+
+    function readAllChunksSequentially() {
+      if (isSequentialAudioPlaying) {
+        stopSequentialSpellingAudio();
+        return;
+      }
+
+      const words = spellingInput.value.trim().split(/\s+/).filter(w => w.length > 0);
+      if (words.length === 0) return;
+
+      isSequentialAudioPlaying = true;
+      readAllChunksBtn.innerHTML = `
+        <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>
+        <span>Stop Audio</span>
+      `;
+
+      // Build sequence of items: { type: 'chunk' | 'word', text, tileId }
+      const sequence = [];
+      words.forEach((rawWord, wIdx) => {
+        const chunks = splitWordIntoSyllables(rawWord);
+        chunks.forEach((chunk, cIdx) => {
+          sequence.push({
+            type: 'chunk',
+            text: chunk,
+            tileId: `chunk-tile-${wIdx}-${cIdx}`,
+            pauseAfter: 750
+          });
+        });
+        sequence.push({
+          type: 'word',
+          text: rawWord,
+          cardId: `word-card-${wIdx}`,
+          pauseAfter: 1200
+        });
+      });
+
+      let currentStep = 0;
+      function playStep() {
+        if (!isSequentialAudioPlaying || currentStep >= sequence.length) {
+          stopSequentialSpellingAudio();
+          return;
+        }
+
+        const item = sequence[currentStep];
+
+        // Clear previous highlights
+        document.querySelectorAll('.active-chunk-highlight').forEach(el => {
+          el.classList.remove('active-chunk-highlight', 'ring-3', 'ring-[#FB923C]', 'scale-105');
+        });
+
+        if (item.type === 'chunk') {
+          const tile = document.getElementById(item.tileId);
+          if (tile) {
+            tile.classList.add('active-chunk-highlight', 'ring-3', 'ring-[#FB923C]', 'scale-105');
+            tile.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+          speakSound(item.text, spellingAudioSpeed);
+        } else if (item.type === 'word') {
+          const card = document.getElementById(item.cardId);
+          if (card) {
+            card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+          speakSound(item.text, 0.95);
+        }
+
+        currentStep++;
+        const tid = setTimeout(playStep, item.pauseAfter);
+        sequentialTimeouts.push(tid);
+      }
+
+      playStep();
+    }
+
+    readAllChunksBtn.addEventListener('click', readAllChunksSequentially);
+
+    // ==========================================
+    // 🧩 RENDER CHUNK CARDS (STUDY vs QUIZ)
+    // ==========================================
+    function renderChunkCards() {
+      stopSequentialSpellingAudio();
+      const raw = spellingInput.value.trim();
+      const words = raw.split(/\s+/).filter(w => w.length > 0);
+
+      spellingWordCount.innerText = `${words.length} ${words.length === 1 ? 'word' : 'words'}`;
+
+      if (words.length === 0) {
+        spellingCardsContainer.innerHTML = `
+          <div class="bg-white/90 border border-dashed border-[#FED7AA] rounded-2xl p-8 text-center text-stone-500">
+            <span class="text-3xl">🧩</span>
+            <p class="text-sm font-semibold text-stone-700 mt-2">No words to display yet</p>
+            <p class="text-xs text-stone-500 mt-1">Type difficult words or select one from the Word Banks on the left.</p>
+          </div>
+        `;
+        syllablesBadge.innerText = '0 Words • 0 Chunks';
+        return;
+      }
+
+      let totalChunks = 0;
+      spellingCardsContainer.innerHTML = '';
+
+      const palette = (soundBoxPalette === 'contrast') ? contrastColors : pastelColors;
+
+      words.forEach((word, wIdx) => {
+        const chunks = splitWordIntoSyllables(word);
+        totalChunks += chunks.length;
+
+        const card = document.createElement('div');
+        card.id = `word-card-${wIdx}`;
+        card.className = 'bg-white/95 border border-[#F5E0D3] rounded-2xl p-4 shadow-xs space-y-3 transition duration-150';
+
+        if (spellingMode === 'study') {
+          // STUDY MODE: full word header + isolated sound box row
+          card.innerHTML = `
+            <div class="flex items-center justify-between border-b border-[#F5E0D3]/60 pb-2">
+              <div class="flex items-center gap-2">
+                <span class="text-base font-bold text-stone-800 tracking-wide font-sans">${word}</span>
+                <button onclick="window.speakWordFromCard('${word.replace(/'/g, "\\'")}')" class="p-1 rounded-lg text-stone-500 hover:text-[#9A3412] hover:bg-[#FFF0E6] transition" title="Listen to entire word">
+                  <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                </button>
+              </div>
+              <span class="text-[11px] font-medium text-stone-500 bg-[#FFF0E6] px-2.5 py-0.5 rounded-full border border-[#FED7AA]/60">
+                ${chunks.length} ${chunks.length === 1 ? 'Syllable' : 'Syllables'}
+              </span>
+            </div>
+
+            <!-- Syllable Sound Box Row -->
+            <div class="flex flex-wrap items-center gap-2.5 pt-1">
+              ${chunks.map((chunk, cIdx) => {
+                const color = palette[cIdx % palette.length];
+                return `
+                  <div class="flex flex-col items-center gap-1 group">
+                    <button id="chunk-tile-${wIdx}-${cIdx}"
+                      onclick="window.speakChunkFromTile('${chunk.replace(/'/g, "\\'")}', this)"
+                      class="px-4 py-2.5 rounded-xl font-bold text-sm lg:text-base border-2 shadow-2xs transition-all duration-150 hover:-translate-y-0.5 hover:shadow-xs active:scale-95 flex items-center justify-center cursor-pointer tracking-wider font-dyslexia"
+                      style="background-color: ${color.bg}; border-color: ${color.border}; color: ${color.text};"
+                      title="Click to pronounce '${chunk}'">
+                      ${chunk}
+                    </button>
+                    <span class="text-[10px] font-semibold tracking-wider uppercase font-mono" style="color: ${color.label};">
+                      Beat ${cIdx + 1}
+                    </span>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `;
+        } else {
+          // PRACTICE QUIZ MODE: one chunk is hidden as an input box
+          // Pick a chunk to test (middle or second chunk if multiple, else chunk 0)
+          const targetChunkIndex = (chunks.length > 1) ? Math.min(1, chunks.length - 1) : 0;
+          const targetChunk = chunks[targetChunkIndex];
+
+          card.innerHTML = `
+            <div class="flex items-center justify-between border-b border-[#F5E0D3]/60 pb-2">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold text-stone-700 uppercase tracking-wide">Word ${wIdx + 1} Practice</span>
+                <button onclick="window.speakWordFromCard('${word.replace(/'/g, "\\'")}')" class="flex items-center gap-1 text-[11px] font-semibold text-[#9A3412] bg-[#FFF0E6] hover:bg-[#FED7AA] px-2 py-0.5 rounded-lg border border-[#FED7AA] transition" title="Listen to word">
+                  <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+                  <span>Hear Word</span>
+                </button>
+              </div>
+              <span id="quiz-status-${wIdx}" class="text-[11px] font-semibold text-stone-400">Type missing chunk</span>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2.5 pt-1">
+              ${chunks.map((chunk, cIdx) => {
+                const color = palette[cIdx % palette.length];
+                if (cIdx === targetChunkIndex) {
+                  return `
+                    <div class="flex flex-col items-center gap-1">
+                      <div class="flex items-center gap-1.5">
+                        <input id="quiz-input-${wIdx}" type="text"
+                          class="w-24 px-3 py-2 rounded-xl font-bold text-center text-sm border-2 border-dashed border-[#FB923C] bg-[#FFF9F5] text-stone-800 focus:outline-none focus:ring-2 focus:ring-[#FB923C] transition font-dyslexia tracking-wider"
+                          placeholder="?"
+                          autocomplete="off"
+                          onkeydown="if(event.key === 'Enter') window.checkQuizAnswer(${wIdx}, '${targetChunk.replace(/'/g, "\\'")}', '${word.replace(/'/g, "\\'")}')"
+                        />
+                        <button onclick="window.checkQuizAnswer(${wIdx}, '${targetChunk.replace(/'/g, "\\'")}', '${word.replace(/'/g, "\\'")}')"
+                          class="px-2.5 py-2 rounded-xl text-xs font-bold bg-[#FB923C] hover:bg-[#EA580C] text-white transition shadow-xs">
+                          Check
+                        </button>
+                        <button onclick="window.revealQuizAnswer(${wIdx}, '${targetChunk.replace(/'/g, "\\'")}')"
+                          class="px-2 py-2 rounded-xl text-xs font-semibold bg-[#FFF6F0] hover:bg-[#FFEFE6] text-stone-600 border border-[#F5E0D3] transition" title="Show hint">
+                          💡
+                        </button>
+                      </div>
+                      <span class="text-[10px] font-semibold tracking-wider uppercase font-mono text-[#FB923C]">
+                        Missing Beat ${cIdx + 1}
+                      </span>
+                    </div>
+                  `;
+                } else {
+                  return `
+                    <div class="flex flex-col items-center gap-1">
+                      <button onclick="window.speakChunkFromTile('${chunk.replace(/'/g, "\\'")}', this)"
+                        class="px-4 py-2.5 rounded-xl font-bold text-sm lg:text-base border-2 shadow-2xs transition hover:-translate-y-0.5 active:scale-95 tracking-wider font-dyslexia"
+                        style="background-color: ${color.bg}; border-color: ${color.border}; color: ${color.text};">
+                        ${chunk}
+                      </button>
+                      <span class="text-[10px] font-semibold tracking-wider uppercase font-mono" style="color: ${color.label};">
+                        Beat ${cIdx + 1}
+                      </span>
+                    </div>
+                  `;
+                }
+              }).join('')}
+            </div>
+          `;
+        }
+
+        spellingCardsContainer.appendChild(card);
+      });
+
+      syllablesBadge.innerText = `${words.length} ${words.length === 1 ? 'Word' : 'Words'} • ${totalChunks} Chunks`;
+    }
+
+    // Global hooks for inline card buttons
+    window.speakChunkFromTile = function(chunk, btn) {
+      speakSound(chunk, spellingAudioSpeed);
+      if (btn) {
+        btn.classList.add('ring-2', 'ring-[#FB923C]');
+        setTimeout(() => btn.classList.remove('ring-2', 'ring-[#FB923C]'), 400);
+      }
+    };
+
+    window.speakWordFromCard = function(word) {
+      speakSound(word, 0.95);
+    };
+
+    window.checkQuizAnswer = function(wIdx, targetChunk, fullWord) {
+      const input = document.getElementById(`quiz-input-${wIdx}`);
+      const status = document.getElementById(`quiz-status-${wIdx}`);
+      if (!input || !status) return;
+
+      const userVal = input.value.trim().toLowerCase();
+      const cleanTarget = targetChunk.replace(/[^a-zA-Z']/g, '').toLowerCase();
+
+      if (userVal === cleanTarget) {
+        input.className = 'w-24 px-3 py-2 rounded-xl font-bold text-center text-sm border-2 border-emerald-500 bg-emerald-50 text-emerald-800 font-dyslexia tracking-wider';
+        status.className = 'text-[11px] font-bold text-emerald-600 flex items-center gap-1';
+        status.innerHTML = '<span>✓ Correct!</span> <span>🌸</span>';
+        speakSound(fullWord, 0.95);
+      } else {
+        input.classList.add('ring-2', 'ring-rose-400');
+        setTimeout(() => input.classList.remove('ring-2', 'ring-rose-400'), 500);
+        status.className = 'text-[11px] font-bold text-amber-600';
+        status.innerText = "Try again, you've got this! ✨";
+        speakSound(targetChunk, 0.8);
+      }
+    };
+
+    window.revealQuizAnswer = function(wIdx, targetChunk) {
+      const input = document.getElementById(`quiz-input-${wIdx}`);
+      const status = document.getElementById(`quiz-status-${wIdx}`);
+      if (!input) return;
+      input.value = targetChunk;
+      input.className = 'w-24 px-3 py-2 rounded-xl font-bold text-center text-sm border-2 border-amber-400 bg-amber-50 text-amber-800 font-dyslexia tracking-wider';
+      if (status) {
+        status.className = 'text-[11px] font-semibold text-amber-700';
+        status.innerText = `Hint: "${targetChunk}"`;
+      }
+      speakSound(targetChunk, 0.75);
+    };
+
+    // Mode Toggle Handlers
+    spellingModeStudyBtn.addEventListener('click', () => {
+      spellingMode = 'study';
+      spellingModeStudyBtn.className = 'py-1.5 px-2 rounded-lg text-xs font-bold transition shadow-xs bg-white text-[#9A3412] border border-[#FED7AA] flex items-center justify-center gap-1';
+      spellingModeQuizBtn.className = 'py-1.5 px-2 rounded-lg text-xs font-semibold text-stone-600 hover:text-[#9A3412] transition flex items-center justify-center gap-1';
+      spellingHeaderTitle.innerText = "Orton-Gillingham Syllable Sound-Boxes";
+      renderChunkCards();
+    });
+
+    spellingModeQuizBtn.addEventListener('click', () => {
+      spellingMode = 'quiz';
+      spellingModeQuizBtn.className = 'py-1.5 px-2 rounded-lg text-xs font-bold transition shadow-xs bg-white text-[#9A3412] border border-[#FED7AA] flex items-center justify-center gap-1';
+      spellingModeStudyBtn.className = 'py-1.5 px-2 rounded-lg text-xs font-semibold text-stone-600 hover:text-[#9A3412] transition flex items-center justify-center gap-1';
+      spellingHeaderTitle.innerText = "Spelling Practice & Recall Quiz";
+      renderChunkCards();
+    });
+
+    // Chunking Actions
+    chunkWordsBtn.addEventListener('click', renderChunkCards);
+    clearSpellingInputBtn.addEventListener('click', () => {
+      spellingInput.value = '';
+      renderChunkCards();
+      spellingInput.focus();
+    });
+
+    // Audio Speed Buttons
+    audioSpeedSlow.addEventListener('click', () => {
+      spellingAudioSpeed = 0.8;
+      audioSpeedSlow.className = 'px-2 py-0.5 rounded-md text-[11px] font-bold bg-[#FFEDD5] text-[#9A3412] border border-[#FED7AA]';
+      audioSpeedNormal.className = 'px-2 py-0.5 rounded-md text-[11px] font-semibold bg-[#FFF6F0] text-stone-600 hover:bg-[#FFEFE6] border border-[#F5E0D3]';
+    });
+
+    audioSpeedNormal.addEventListener('click', () => {
+      spellingAudioSpeed = 1.0;
+      audioSpeedNormal.className = 'px-2 py-0.5 rounded-md text-[11px] font-bold bg-[#FFEDD5] text-[#9A3412] border border-[#FED7AA]';
+      audioSpeedSlow.className = 'px-2 py-0.5 rounded-md text-[11px] font-semibold bg-[#FFF6F0] text-stone-600 hover:bg-[#FFEFE6] border border-[#F5E0D3]';
+    });
+
+    // Palette Toggles
+    palettePastelBtn.addEventListener('click', () => {
+      soundBoxPalette = 'pastel';
+      palettePastelBtn.className = 'py-1.5 px-2 rounded-xl font-bold bg-[#FFF0E6] text-[#9A3412] border border-[#FED7AA] transition flex items-center justify-center gap-1.5';
+      paletteHighContrastBtn.className = 'py-1.5 px-2 rounded-xl font-semibold bg-[#FFF6F0] text-stone-600 hover:bg-[#FFEFE6] border border-[#F5E0D3] transition flex items-center justify-center gap-1.5';
+      renderChunkCards();
+    });
+
+    paletteHighContrastBtn.addEventListener('click', () => {
+      soundBoxPalette = 'contrast';
+      paletteHighContrastBtn.className = 'py-1.5 px-2 rounded-xl font-bold bg-[#FFF0E6] text-[#9A3412] border border-[#FED7AA] transition flex items-center justify-center gap-1.5';
+      palettePastelBtn.className = 'py-1.5 px-2 rounded-xl font-semibold bg-[#FFF6F0] text-stone-600 hover:bg-[#FFEFE6] border border-[#F5E0D3] transition flex items-center justify-center gap-1.5';
+      renderChunkCards();
+    });
+
+    // Copy Hyphenated Chunks
+    copyHyphenatedBtn.addEventListener('click', () => {
+      const words = spellingInput.value.trim().split(/\s+/).filter(w => w.length > 0);
+      if (words.length === 0) return;
+      const hyphenated = words.map(w => splitWordIntoSyllables(w).join('·')).join(', ');
+      navigator.clipboard.writeText(hyphenated).then(() => {
+        const orig = copyHyphenatedBtn.innerHTML;
+        copyHyphenatedBtn.innerHTML = '<span>✓ Copied!</span>';
+        setTimeout(() => copyHyphenatedBtn.innerHTML = orig, 1800);
+      });
+    });
+
+    // Initial Spelling Studio Initialization
+    renderWordBankPills();
+    renderChunkCards();
+
+    // Check if user previously saved tab state
+    const savedTab = localStorage.getItem('ruhi_active_tab');
+    if (savedTab === 'spelling') {
+      setActiveTab('spelling');
+    }
   </script>
 </body>
 </html>
