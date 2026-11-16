@@ -9,6 +9,7 @@
 
   <!-- Open Graph / LinkedIn / Facebook -->
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ruhi's NoteBook">
   <meta property="og:url" content="https://jemims-notebook.abid-northsouth-sbe.workers.dev/">
   <meta property="og:title" content="🌸 Ruhi's NoteBook — Accessibility & Classroom Pacing Suite">
   <meta property="og:description" content="Empowering readers with Dyslexia & ADHD with dynamic letter spacing, bionic word anchors, line-focus dimming, and ear-soothing narration voices. Built with love by Abid for Ruhi.">
@@ -17,6 +18,9 @@
   <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:width" content="1024">
   <meta property="og:image:height" content="499">
+  <meta property="og:image:alt" content="Ruhi's NoteBook Classroom Suite Preview">
+  <meta property="og:locale" content="en_US">
+  <link rel="canonical" href="https://jemims-notebook.abid-northsouth-sbe.workers.dev/">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
@@ -103,43 +107,54 @@
     }
   </style>
 </head>
-<body class="bg-[#FFF6F0] text-[#2D241E] h-screen w-screen overflow-hidden antialiased flex flex-col font-sans selection:bg-[#FED7AA] selection:text-[#431407]">
+<body class="bg-[#FFF6F0] text-[#2D241E] min-h-screen w-full lg:h-screen lg:w-screen lg:overflow-hidden overflow-y-auto overflow-x-hidden antialiased flex flex-col font-sans selection:bg-[#FED7AA] selection:text-[#431407]">
 
   <!-- Header with Personal Peachy Branding (Static Top) -->
-  <header class="flex-shrink-0 border-b border-[#F5E0D3] bg-white/95 backdrop-blur z-30 px-4 lg:px-6 py-2.5 shadow-xs">
-    <div class="max-w-[1540px] w-full mx-auto flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#FED7AA] via-[#FDBA74] to-[#FCA5A5] text-[#431407] font-extrabold flex items-center justify-center text-xs shadow-xs border border-[#FDBA74]/50 tracking-wider">
-          RUHI
+  <header class="flex-shrink-0 border-b border-[#F5E0D3] bg-white/95 backdrop-blur z-30 px-3 sm:px-4 lg:px-6 py-2 lg:py-2.5 shadow-xs">
+    <div class="max-w-[1540px] w-full mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-2 md:gap-4">
+      
+      <!-- Top Row on Mobile: Brand Info + Mobile Fullscreen Button -->
+      <div class="w-full md:w-auto flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5 sm:gap-3">
+          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-[#FED7AA] via-[#FDBA74] to-[#FCA5A5] text-[#431407] font-extrabold flex items-center justify-center text-xs shadow-xs border border-[#FDBA74]/50 tracking-wider flex-shrink-0">
+            RUHI
+          </div>
+          <div>
+            <h1 class="text-sm lg:text-base font-bold text-stone-800 tracking-tight flex items-center gap-1.5">
+              <span>Ruhi's NoteBook</span>
+              <span class="text-xs">🌸</span>
+            </h1>
+            <p class="text-[10px] sm:text-[11px] text-stone-500 flex items-center gap-1">
+              <span>Crafted with love by Abid</span>
+              <span class="text-rose-400">♥</span>
+              <span class="hidden sm:inline">Classroom Pacing Suite</span>
+              <span class="sm:hidden">Suite</span>
+            </p>
+          </div>
         </div>
-        <div>
-          <h1 class="text-sm lg:text-base font-bold text-stone-800 tracking-tight">
-            Ruhi's NoteBook
-          </h1>
-          <p class="text-[11px] text-stone-500 flex items-center gap-1.5">
-            <span>Crafted with love by Abid</span>
-            <span class="text-rose-400">♥</span>
-            <span>Classroom Pacing Suite</span>
-          </p>
-        </div>
+
+        <!-- Mobile Fullscreen Button -->
+        <button id="toggleFullscreenBtnMobile" class="md:hidden p-2 rounded-xl bg-white hover:bg-[#FFF0E6] border border-[#F5E0D3] text-stone-600 hover:text-[#C2410C] transition shadow-xs" title="Toggle Fullscreen">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+        </button>
       </div>
 
-      <!-- Navigation Tabs: Classroom Pacer vs Syllable Spelling Studio -->
-      <nav class="flex items-center bg-[#FFF0E6] p-1 rounded-2xl border border-[#FED7AA]/80 shadow-2xs">
-        <button id="tabReaderBtn" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition shadow-xs bg-white text-[#9A3412] border border-[#FED7AA]">
+      <!-- Navigation Tabs: Classroom Pacer vs Syllable Spelling Studio (Full width 50/50 on mobile) -->
+      <nav class="w-full md:w-auto flex items-center justify-center bg-[#FFF0E6] p-1 rounded-2xl border border-[#FED7AA]/80 shadow-2xs">
+        <button id="tabReaderBtn" class="flex-1 md:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-xs bg-white text-[#9A3412] border border-[#FED7AA]">
           <span>🌸</span>
           <span>Classroom Reader</span>
         </button>
-        <button id="tabSpellingBtn" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold text-stone-600 hover:text-[#9A3412] transition">
+        <button id="tabSpellingBtn" class="flex-1 md:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-stone-600 hover:text-[#9A3412] transition">
           <span>🧩</span>
-          <span>Syllable Spelling Studio</span>
+          <span>Syllable Studio</span>
           <span class="text-[10px] px-1.5 py-0.2 rounded-full bg-[#FB923C] text-white font-bold tracking-wide">NEW</span>
         </button>
       </nav>
 
-      <!-- Mode Status & Fullscreen -->
-      <div class="flex items-center gap-3">
-        <div id="statusPill" class="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFF0E6] border border-[#FED7AA]/80 text-xs font-medium text-stone-700 shadow-xs">
+      <!-- Desktop Mode Status & Fullscreen Button -->
+      <div class="hidden md:flex items-center gap-3">
+        <div id="statusPill" class="flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFF0E6] border border-[#FED7AA]/80 text-xs font-medium text-stone-700 shadow-xs">
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
           <span id="statusText">Welcome, Ruhi ✨ Ready for class</span>
         </div>
@@ -147,14 +162,15 @@
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
         </button>
       </div>
+
     </div>
   </header>
 
   <!-- View 1: Classroom Pacer & Reader -->
-  <div id="readerView" class="view-panel flex-1 w-full max-w-[1540px] mx-auto px-4 lg:px-6 py-3 flex flex-col lg:flex-row gap-5 overflow-hidden min-h-0">
+  <div id="readerView" class="view-panel flex-1 w-full max-w-[1540px] mx-auto px-3 sm:px-4 lg:px-6 py-3 flex flex-col lg:flex-row gap-4 lg:gap-5 lg:overflow-hidden min-h-0">
 
     <!-- Left Controls Panel: Compact, all settings visible simultaneously without scrolling -->
-    <aside class="w-full lg:w-[390px] xl:w-[410px] flex-shrink-0 flex flex-col gap-3 justify-between overflow-y-auto lg:overflow-visible">
+    <aside class="w-full lg:w-[390px] xl:w-[410px] flex-shrink-0 flex flex-col gap-3 justify-between overflow-visible">
 
       <!-- Card 1: Ruhi's Pacing Coach & Narration Voices -->
       <div class="bg-white/95 border border-[#F5E0D3] rounded-2xl p-4 shadow-xs space-y-3">
@@ -334,7 +350,7 @@
     </aside>
 
     <!-- Right Reading Canvas: Expands to fill all remaining width, ONLY the text surface scrolls -->
-    <main class="flex-1 min-w-0 h-full flex flex-col gap-2.5 overflow-hidden">
+    <main class="flex-1 min-w-0 lg:h-full flex flex-col gap-2.5 lg:overflow-hidden min-h-[500px] pb-6 lg:pb-0">
 
       <!-- Text Input Tab & Edit Switch (Fixed Top Bar) -->
       <div class="flex-shrink-0 flex items-center justify-between bg-white/95 border border-[#F5E0D3] px-4 py-2 rounded-xl shadow-xs">
@@ -360,7 +376,7 @@
       </div>
 
       <!-- The Main Pastel Paper Surface (ONLY THIS ELEMENT SCROLLS VERTICALLY) -->
-      <div id="readingPaper" class="relative flex-1 min-h-0 bg-[#FFF0E5] text-[#2E221B] font-dyslexia rounded-2xl p-6 lg:p-10 shadow-sm border border-[#F5E0D3] overflow-y-auto leading-relaxed select-none transition-colors duration-200">
+      <div id="readingPaper" class="relative flex-1 min-h-[420px] lg:min-h-0 bg-[#FFF0E5] text-[#2E221B] font-dyslexia rounded-2xl p-5 sm:p-6 lg:p-10 shadow-sm border border-[#F5E0D3] overflow-y-auto leading-relaxed select-none transition-colors duration-200">
         
         <!-- Text content rendered dynamically here -->
         <div id="readerContent" class="space-y-6 text-[22px]">
@@ -386,10 +402,10 @@
   </div>
 
   <!-- View 2: Syllable Spelling Studio (Orton-Gillingham Sound-Box Lab) -->
-  <div id="spellingView" class="view-panel hidden flex-1 w-full max-w-[1540px] mx-auto px-4 lg:px-6 py-3 flex flex-col lg:flex-row gap-5 overflow-hidden min-h-0">
+  <div id="spellingView" class="view-panel hidden flex-1 w-full max-w-[1540px] mx-auto px-3 sm:px-4 lg:px-6 py-3 flex flex-col lg:flex-row gap-4 lg:gap-5 lg:overflow-hidden min-h-0">
 
     <!-- Left Controls Panel -->
-    <aside class="w-full lg:w-[390px] xl:w-[410px] flex-shrink-0 flex flex-col gap-3 justify-between overflow-y-auto lg:overflow-visible">
+    <aside class="w-full lg:w-[390px] xl:w-[410px] flex-shrink-0 flex flex-col gap-3 justify-between overflow-visible">
 
       <!-- Card 1: Syllable Chunking Input & Mode -->
       <div class="bg-white/95 border border-[#F5E0D3] rounded-2xl p-4 shadow-xs space-y-3">
@@ -487,7 +503,7 @@
     </aside>
 
     <!-- Right Main Interactive Paper for Chunks -->
-    <main class="flex-1 flex flex-col bg-white/95 border border-[#F5E0D3] rounded-2xl shadow-xs overflow-hidden min-h-0">
+    <main class="flex-1 flex flex-col bg-white/95 border border-[#F5E0D3] rounded-2xl shadow-xs lg:overflow-hidden min-h-[500px] lg:min-h-0 mb-6 lg:mb-0">
 
       <!-- Top Canvas Action Bar -->
       <div class="flex-shrink-0 px-4 py-2.5 border-b border-[#F5E0D3] bg-white flex flex-wrap items-center justify-between gap-2 z-10">
@@ -512,7 +528,7 @@
       </div>
 
       <!-- Scrollable Spelling Sound-Box Canvas -->
-      <div id="spellingPaper" class="flex-1 bg-[#FFF0E5] p-4 lg:p-6 overflow-y-auto selection:bg-[#FED7AA] transition-colors duration-200">
+      <div id="spellingPaper" class="flex-1 bg-[#FFF0E5] p-3 sm:p-4 lg:p-6 overflow-y-auto min-h-[380px] lg:min-h-0 selection:bg-[#FED7AA] transition-colors duration-200">
         <div id="spellingCardsContainer" class="max-w-4xl mx-auto space-y-3.5">
           <!-- Populated dynamically: Cards with isolated pastel sound-boxes -->
         </div>
@@ -1008,7 +1024,12 @@ With a peaceful smile, she began to read. Her voice was steady, clear, and full 
 
     // Event Listeners
     startPacerBtn.addEventListener('click', () => {
-      isPacing ? stopPacer() : startPacer();
+      if (!isPacing) {
+        startPacer();
+        scrollToElementOnMobile(readingPaper);
+      } else {
+        stopPacer();
+      }
     });
 
     resetPacerBtn.addEventListener('click', resetPacer);
@@ -1085,14 +1106,28 @@ With a peaceful smile, she began to read. Her voice was steady, clear, and full 
     });
 
     // Fullscreen Toggle
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => console.log(err));
+      } else {
+        document.exitFullscreen();
+      }
+    }
     if (toggleFullscreenBtn) {
-      toggleFullscreenBtn.addEventListener('click', () => {
-        if (!document.fullscreenElement) {
-          document.documentElement.requestFullscreen().catch(err => console.log(err));
-        } else {
-          document.exitFullscreen();
-        }
-      });
+      toggleFullscreenBtn.addEventListener('click', toggleFullscreen);
+    }
+    const toggleFullscreenBtnMobile = document.getElementById('toggleFullscreenBtnMobile');
+    if (toggleFullscreenBtnMobile) {
+      toggleFullscreenBtnMobile.addEventListener('click', toggleFullscreen);
+    }
+
+    // Smooth scroll helper for mobile screens (< 1024px)
+    function scrollToElementOnMobile(targetEl) {
+      if (window.innerWidth < 1024 && targetEl) {
+        setTimeout(() => {
+          targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 120);
+      }
     }
 
     // Spacebar & Arrow Key Shortcuts
@@ -1479,6 +1514,7 @@ With a peaceful smile, she began to read. Her voice was steady, clear, and full 
         btn.addEventListener('click', () => {
           spellingInput.value = w;
           renderChunkCards();
+          scrollToElementOnMobile(document.getElementById('spellingCardsContainer') || spellingPaper);
         });
         wordBankPillsContainer.appendChild(btn);
       });
@@ -1863,7 +1899,10 @@ With a peaceful smile, she began to read. Her voice was steady, clear, and full 
     });
 
     // Chunking Actions
-    chunkWordsBtn.addEventListener('click', renderChunkCards);
+    chunkWordsBtn.addEventListener('click', () => {
+      renderChunkCards();
+      scrollToElementOnMobile(document.getElementById('spellingCardsContainer') || spellingPaper);
+    });
     clearSpellingInputBtn.addEventListener('click', () => {
       spellingInput.value = '';
       renderChunkCards();
