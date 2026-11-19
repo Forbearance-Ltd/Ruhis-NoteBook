@@ -566,6 +566,70 @@
 
   </div>
 
+  <!-- Ruhi's Cloud Word Vault Modal -->
+  <div id="vaultModal" class="fixed inset-0 z-50 hidden bg-stone-900/40 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 transition-opacity duration-200">
+    <div class="bg-[#FFFBF8] border border-[#F5E0D3] rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden font-sans">
+      
+      <!-- Vault Header -->
+      <div class="px-5 py-4 border-b border-[#F5E0D3] bg-white flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#FED7AA] to-[#FCA5A5] flex items-center justify-center text-xl shadow-xs border border-[#FED7AA]">
+            ⭐
+          </div>
+          <div>
+            <h2 class="text-base font-bold text-stone-800 flex items-center gap-2">
+              <span>Ruhi's Cloud Word Vault</span>
+              <span id="vaultModalCount" class="text-xs font-bold px-2 py-0.5 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#FDE68A]">0 Words</span>
+            </h2>
+            <p class="text-xs text-stone-500">
+              Tricky words curated by Ruhi · Synced across your phone & laptop ☁️
+            </p>
+          </div>
+        </div>
+        <button id="closeVaultBtn" class="p-2 rounded-xl text-stone-400 hover:text-stone-700 hover:bg-[#FFF0E6] transition" title="Close Vault">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Vault Search & Filter Bar -->
+      <div class="px-5 py-2.5 bg-[#FFF6F0] border-b border-[#F5E0D3] flex items-center justify-between gap-3">
+        <div class="relative flex-1">
+          <input id="vaultSearchInput" type="text" placeholder="Search your saved words..." 
+            class="w-full pl-8 pr-3 py-1.5 rounded-xl border border-[#F5E0D3] bg-white text-xs text-stone-800 focus:outline-none focus:ring-2 focus:ring-[#FB923C]/40 focus:border-[#FB923C]">
+          <svg class="w-3.5 h-3.5 text-stone-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        </div>
+        <button id="refreshVaultBtn" class="flex items-center gap-1.5 text-xs text-stone-600 hover:text-[#9A3412] bg-white px-3 py-1.5 rounded-xl border border-[#F5E0D3] shadow-2xs hover:bg-[#FFF0E6] transition" title="Sync from cloud">
+          <svg id="refreshVaultIcon" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          <span>Sync</span>
+        </button>
+      </div>
+
+      <!-- Vault Words List -->
+      <div id="vaultListContainer" class="flex-1 p-4 sm:p-5 overflow-y-auto space-y-3 bg-[#FFFBF8] min-h-[220px]">
+        <!-- Populated dynamically via JS -->
+      </div>
+
+      <!-- Vault Footer & Cloud Sync Status -->
+      <div class="px-5 py-3 border-t border-[#F5E0D3] bg-white flex items-center justify-between text-xs text-stone-500">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span id="vaultSyncStatus">Connected to Supabase Cloud</span>
+        </div>
+        <div class="text-[11px] text-[#C2410C] font-semibold flex items-center gap-1">
+          <span>Curated with love by Ruhi</span>
+          <span class="text-rose-500">❤️</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="vaultToast" class="fixed bottom-6 right-6 z-50 hidden bg-white border border-[#FED7AA] shadow-xl rounded-2xl px-4 py-2.5 text-xs font-semibold text-stone-800 flex items-center gap-2 transition-all duration-200">
+    <span id="vaultToastIcon" class="text-base">✨</span>
+    <span id="vaultToastMsg">Word saved to Ruhi's Vault!</span>
+  </div>
+
   <!-- Client JavaScript Logic -->
   <script>
     // Sample Texts Tailored for Ruhi
@@ -1985,69 +2049,7 @@ With a peaceful smile, she began to read. Her voice was steady, clear, and full 
       setActiveTab('spelling');
     }
 
-  <!-- Ruhi's Cloud Word Vault Modal -->
-  <div id="vaultModal" class="fixed inset-0 z-50 hidden bg-stone-900/40 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 transition-opacity duration-200">
-    <div class="bg-[#FFFBF8] border border-[#F5E0D3] rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden font-sans">
-      
-      <!-- Vault Header -->
-      <div class="px-5 py-4 border-b border-[#F5E0D3] bg-white flex items-center justify-between gap-3">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#FED7AA] to-[#FCA5A5] flex items-center justify-center text-xl shadow-xs border border-[#FED7AA]">
-            ⭐
-          </div>
-          <div>
-            <h2 class="text-base font-bold text-stone-800 flex items-center gap-2">
-              <span>Ruhi's Cloud Word Vault</span>
-              <span id="vaultModalCount" class="text-xs font-bold px-2 py-0.5 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#FDE68A]">0 Words</span>
-            </h2>
-            <p class="text-xs text-stone-500">
-              Tricky words curated by Ruhi · Synced across your phone & laptop ☁️
-            </p>
-          </div>
-        </div>
-        <button id="closeVaultBtn" class="p-2 rounded-xl text-stone-400 hover:text-stone-700 hover:bg-[#FFF0E6] transition" title="Close Vault">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-        </button>
-      </div>
 
-      <!-- Vault Search & Filter Bar -->
-      <div class="px-5 py-2.5 bg-[#FFF6F0] border-b border-[#F5E0D3] flex items-center justify-between gap-3">
-        <div class="relative flex-1">
-          <input id="vaultSearchInput" type="text" placeholder="Search your saved words..." 
-            class="w-full pl-8 pr-3 py-1.5 rounded-xl border border-[#F5E0D3] bg-white text-xs text-stone-800 focus:outline-none focus:ring-2 focus:ring-[#FB923C]/40 focus:border-[#FB923C]">
-          <svg class="w-3.5 h-3.5 text-stone-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-        </div>
-        <button id="refreshVaultBtn" class="flex items-center gap-1.5 text-xs text-stone-600 hover:text-[#9A3412] bg-white px-3 py-1.5 rounded-xl border border-[#F5E0D3] shadow-2xs hover:bg-[#FFF0E6] transition" title="Sync from cloud">
-          <svg id="refreshVaultIcon" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-          <span>Sync</span>
-        </button>
-      </div>
-
-      <!-- Vault Words List -->
-      <div id="vaultListContainer" class="flex-1 p-4 sm:p-5 overflow-y-auto space-y-3 bg-[#FFFBF8] min-h-[220px]">
-        <!-- Populated dynamically via JS -->
-      </div>
-
-      <!-- Vault Footer & Cloud Sync Status -->
-      <div class="px-5 py-3 border-t border-[#F5E0D3] bg-white flex items-center justify-between text-xs text-stone-500">
-        <div class="flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span id="vaultSyncStatus">Connected to Supabase Cloud</span>
-        </div>
-        <div class="text-[11px] text-[#C2410C] font-semibold flex items-center gap-1">
-          <span>Curated with love by Ruhi</span>
-          <span class="text-rose-500">❤️</span>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- Toast Notification -->
-  <div id="vaultToast" class="fixed bottom-6 right-6 z-50 hidden bg-white border border-[#FED7AA] shadow-xl rounded-2xl px-4 py-2.5 text-xs font-semibold text-stone-800 flex items-center gap-2 transition-all duration-200">
-    <span id="vaultToastIcon" class="text-base">✨</span>
-    <span id="vaultToastMsg">Word saved to Ruhi's Vault!</span>
-  </div>
 
     // ==========================================
     // RUHI'S CLOUD WORD VAULT (SUPABASE INTEGRATION)
