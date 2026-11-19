@@ -486,6 +486,10 @@
           <button id="bankTabEveryday" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold text-stone-600 hover:text-[#9A3412] hover:bg-[#FFF6F0] border border-transparent transition">Everyday</button>
           <button id="bankTabAcademic" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold text-stone-600 hover:text-[#9A3412] hover:bg-[#FFF6F0] border border-transparent transition">Academic</button>
           <button id="bankTabConfusing" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold text-stone-600 hover:text-[#9A3412] hover:bg-[#FFF6F0] border border-transparent transition">Tricky Pairs</button>
+          <button id="bankTabVault" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold text-stone-600 hover:text-[#9A3412] hover:bg-[#FFF6F0] border border-transparent transition flex items-center gap-1">
+            <span>⭐ Vault</span>
+            <span id="bankVaultBadge" class="text-[9px] px-1.5 py-0.2 rounded-full bg-[#FB923C] text-white font-extrabold">0</span>
+          </button>
         </div>
 
         <!-- Word Pills Container -->
@@ -632,6 +636,152 @@
 
   <!-- Client JavaScript Logic -->
   <script>
+    // ==========================================
+    // ⭐ RUHI'S CLOUD WORD VAULT (SUPABASE INITIALIZATION)
+    // ==========================================
+    const SUPABASE_URL = 'https://qfouqxzoormcyuujkuwg.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_nTD7HEvkSt4GqEQo66SJGQ_T6ZVMBf5';
+
+    // Synchronous memory cache from localStorage so isWordInVault is NEVER uninitialized
+    let savedWordsList = [];
+    try {
+      const cached = localStorage.getItem('ruhi_vault_cache');
+      if (cached) savedWordsList = JSON.parse(cached);
+    } catch(e) {
+      savedWordsList = [];
+    }
+    let savedWordsSet = new Set(savedWordsList.map(item => (item.word || '').trim().toLowerCase()));
+
+    // Fast native REST client for Supabase
+    async function supabaseRequest(endpoint, method = 'GET', body = null) {
+      const headers = {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json'
+      };
+      if (method === 'POST') headers['Prefer'] = 'return=representation';
+
+      const options = { method, headers };
+      if (body) options.body = JSON.stringify(body);
+
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, options);
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(`Supabase error (${res.status}): ${errText}`);
+      }
+      if (res.status === 204) return null;
+      return await res.json();
+    }
+
+    function isWordInVault(word) {
+      if (!word) return false;
+      return savedWordsSet.has(word.trim().toLowerCase());
+    }
+
+    function updateVaultBadges() {
+      const count = savedWordsList.length;
+      const bDesktop = document.getElementById('vaultCountBadge');
+      const bMobile = document.getElementById('vaultCountBadgeMobile');
+      const bStudio = document.getElementById('studioVaultBadge');
+      const bModal = document.getElementById('vaultModalCount');
+      const bBank = document.getElementById('bankVaultBadge');
+
+      if (bDesktop) bDesktop.innerText = count;
+      if (bMobile) bMobile.innerText = count;
+      if (bStudio) bStudio.innerText = count;
+      if (bModal) bModal.innerText = `${count} ${count === 1 ? 'Word' : 'Words'}`;
+      if (bBank) bBank.innerText = count;
+    }
+
+    function showToast(msg, icon = '✨') {
+      const toast = document.getElementById('vaultToast');
+      const toastMsg = document.getElementById('vaultToastMsg');
+      const toastIcon = document.getElementById('vaultToastIcon');
+      if (!toast) return;
+      toastMsg.innerText = msg;
+      toastIcon.innerText = icon;
+      toast.classList.remove('hidden');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 2500);
+    }
+
+    async function saveWordToVault(word, syllables, syllableCount) {
+      const cleanWord = word.trim();
+      if (!cleanWord) return;
+
+      if (isWordInVault(cleanWord)) {
+        showToast(`'${cleanWord}' is already saved in your vault!`, '⭐');
+        return;
+      }
+
+      try {
+        const result = await supabaseRequest('ruhi_saved_words', 'POST', {
+          word: cleanWord,
+          syllables: syllables || cleanWord,
+          syllable_count: syllableCount || 1
+        });
+
+        const newItem = (Array.isArray(result) && result[0]) ? result[0] : {
+          word: cleanWord,
+          syllables: syllables || cleanWord,
+          syllable_count: syllableCount || 1,
+          created_at: new Date().toISOString()
+        };
+
+        savedWordsList.unshift(newItem);
+        savedWordsSet.add(cleanWord.toLowerCase());
+        localStorage.setItem('ruhi_vault_cache', JSON.stringify(savedWordsList));
+        updateVaultBadges();
+        if (typeof renderChunkCards === 'function') renderChunkCards();
+        if (typeof renderWordBankPills === 'function') renderWordBankPills();
+        showToast(`✨ '${cleanWord}' saved to Ruhi's Cloud Vault!`, '⭐');
+      } catch (err) {
+        console.error('Error saving word:', err);
+        showToast(`Failed to save: ${err.message}`, '⚠️');
+      }
+    }
+
+    async function removeWordFromVault(word) {
+      const cleanWord = word.trim();
+      try {
+        await supabaseRequest(`ruhi_saved_words?word=eq.${encodeURIComponent(cleanWord)}`, 'DELETE');
+        savedWordsList = savedWordsList.filter(item => item.word.toLowerCase() !== cleanWord.toLowerCase());
+        savedWordsSet.delete(cleanWord.toLowerCase());
+        localStorage.setItem('ruhi_vault_cache', JSON.stringify(savedWordsList));
+        updateVaultBadges();
+        if (typeof renderChunkCards === 'function') renderChunkCards();
+        if (typeof renderWordBankPills === 'function') renderWordBankPills();
+        if (typeof renderVaultList === 'function') renderVaultList();
+        showToast(`'${cleanWord}' deleted from vault! 🗑️`, '✓');
+      } catch (err) {
+        console.error('Error removing word:', err);
+        showToast(`Failed to delete: ${err.message}`, '⚠️');
+      }
+    }
+
+    window.saveWordDirectly = async function(word, syllables, syllableCount) {
+      await saveWordToVault(word, syllables, syllableCount);
+    };
+
+    window.deleteWordDirectly = async function(word) {
+      if (confirm(`Delete "${word}" from Ruhi's Saved Words?`)) {
+        await removeWordFromVault(word);
+      }
+    };
+
+    window.practiceWordFromVault = function(word) {
+      spellingInput.value = word;
+      closeVaultModal();
+      setActiveTab('spelling');
+      renderChunkCards();
+      const target = document.getElementById('spellingCardsContainer') || spellingPaper;
+      if (target) {
+        setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
+      }
+    };
+
     // Sample Texts Tailored for Ruhi
     const samples = {
       classroom: `Good morning, everyone. Welcome to our class. I am so glad to see all of you here today.
@@ -1583,15 +1733,26 @@ With a peaceful smile, she began to read. Her voice was steady, clear, and full 
     const bankTabEveryday = document.getElementById('bankTabEveryday');
     const bankTabAcademic = document.getElementById('bankTabAcademic');
     const bankTabConfusing = document.getElementById('bankTabConfusing');
+    const bankTabVault = document.getElementById('bankTabVault');
     const wordBankPillsContainer = document.getElementById('wordBankPillsContainer');
 
     function renderWordBankPills() {
       wordBankPillsContainer.innerHTML = '';
-      const list = wordBanks[activeBankCategory] || [];
+      let list = [];
+      if (activeBankCategory === 'vault') {
+        list = savedWordsList.map(item => item.word);
+        if (list.length === 0) {
+          wordBankPillsContainer.innerHTML = '<span class="text-[11px] text-stone-400 italic">No words saved in vault yet. Click "⭐ Save to Vault" on any word!</span>';
+          return;
+        }
+      } else {
+        list = wordBanks[activeBankCategory] || [];
+      }
+
       list.forEach(w => {
         const btn = document.createElement('button');
-        btn.className = 'px-2 py-0.5 rounded-lg text-xs font-medium bg-[#FFF0E6] hover:bg-[#FED7AA] text-stone-700 hover:text-[#9A3412] border border-[#FED7AA]/80 transition shadow-2xs active:scale-95';
-        btn.innerText = w;
+        btn.className = 'px-2 py-0.5 rounded-lg text-xs font-medium bg-[#FFF0E6] hover:bg-[#FED7AA] text-stone-700 hover:text-[#9A3412] border border-[#FED7AA]/80 transition shadow-2xs active:scale-95 flex items-center gap-1';
+        btn.innerHTML = `${activeBankCategory === 'vault' ? '⭐ ' : ''}${w}`;
         btn.addEventListener('click', () => {
           spellingInput.value = w;
           renderChunkCards();
@@ -1607,14 +1768,15 @@ With a peaceful smile, she began to read. Her voice was steady, clear, and full 
         { el: bankTab7Cs, name: '7cs' },
         { el: bankTabEveryday, name: 'everyday' },
         { el: bankTabAcademic, name: 'academic' },
-        { el: bankTabConfusing, name: 'confusing' }
+        { el: bankTabConfusing, name: 'confusing' },
+        { el: bankTabVault, name: 'vault' }
       ];
       tabs.forEach(t => {
         if (t.el) {
           if (t.name === cat) {
-            t.el.className = 'px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[#FFEDD5] text-[#9A3412] border border-[#FED7AA] transition shadow-2xs';
+            t.el.className = 'px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[#FFEDD5] text-[#9A3412] border border-[#FED7AA] transition shadow-2xs flex items-center gap-1';
           } else {
-            t.el.className = 'px-2.5 py-1 rounded-lg text-[11px] font-semibold text-stone-600 hover:text-[#9A3412] hover:bg-[#FFF6F0] border border-transparent transition';
+            t.el.className = 'px-2.5 py-1 rounded-lg text-[11px] font-semibold text-stone-600 hover:text-[#9A3412] hover:bg-[#FFF6F0] border border-transparent transition flex items-center gap-1';
           }
         }
       });
@@ -1622,9 +1784,10 @@ With a peaceful smile, she began to read. Her voice was steady, clear, and full 
     }
 
     if (bankTab7Cs) bankTab7Cs.addEventListener('click', () => setBankCategory('7cs'));
-    bankTabEveryday.addEventListener('click', () => setBankCategory('everyday'));
-    bankTabAcademic.addEventListener('click', () => setBankCategory('academic'));
-    bankTabConfusing.addEventListener('click', () => setBankCategory('confusing'));
+    if (bankTabEveryday) bankTabEveryday.addEventListener('click', () => setBankCategory('everyday'));
+    if (bankTabAcademic) bankTabAcademic.addEventListener('click', () => setBankCategory('academic'));
+    if (bankTabConfusing) bankTabConfusing.addEventListener('click', () => setBankCategory('confusing'));
+    if (bankTabVault) bankTabVault.addEventListener('click', () => setBankCategory('vault'));
 
     // ==========================================
     // 🧩 SPELLING STATE & PALETTE SETTINGS
@@ -1810,12 +1973,23 @@ With a peaceful smile, she began to read. Her voice was steady, clear, and full 
                 </button>
                 ${seg.isAmbiguous ? `<span class="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full" title="Syllable boundary estimated by Orton-Gillingham rules">⚠️ Review Flag</span>` : ''}
               </div>
-              <div class="flex items-center gap-1.5">
-                <button onclick="window.toggleSaveWordToVault('${word.replace(/'/g, "\\'")}', '${chunks.join(' / ').replace(/'/g, "\\'")}', ${chunks.length}, this)"
-                  class="save-vault-btn flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-xl transition shadow-2xs border ${isWordInVault(word) ? 'bg-[#FED7AA] text-[#7C2D12] border-[#FB923C]' : 'bg-[#FFF6F0] hover:bg-[#FFEFE6] text-stone-600 hover:text-[#9A3412] border-[#F5E0D3]'}"
-                  title="${isWordInVault(word) ? 'Saved in Ruhi\'s Cloud Vault. Click to remove.' : 'Save specifically this word to Ruhi\'s Cloud Vault'}">
-                  <span>${isWordInVault(word) ? '⭐ In Vault' : '🤍 Save to Vault'}</span>
-                </button>
+              <div class="flex items-center gap-2">
+                ${isWordInVault(word) ? `
+                  <span class="text-[11px] font-bold text-amber-800 bg-[#FEF3C7] border border-[#FDE68A] px-2.5 py-1 rounded-xl flex items-center gap-1 shadow-2xs">
+                    <span>⭐ Saved in Vault</span>
+                  </span>
+                  <button onclick="window.deleteWordDirectly('${word.replace(/'/g, "\\'")}')" 
+                    class="text-[11px] font-bold text-rose-700 hover:text-white bg-rose-50 hover:bg-rose-500 border border-rose-200 px-2.5 py-1 rounded-xl transition shadow-2xs flex items-center gap-1 cursor-pointer"
+                    title="Delete this word from Ruhi's Vault">
+                    <span>🗑️ Delete</span>
+                  </button>
+                ` : `
+                  <button onclick="window.saveWordDirectly('${word.replace(/'/g, "\\'")}', '${chunks.join(' / ').replace(/'/g, "\\'")}', ${chunks.length})"
+                    class="text-[11px] font-bold text-[#9A3412] bg-[#FFF0E6] hover:bg-[#FED7AA] border border-[#FED7AA] px-3 py-1 rounded-xl transition shadow-2xs flex items-center gap-1 cursor-pointer active:scale-95"
+                    title="Save this word to Ruhi's Cloud Vault">
+                    <span>⭐ Save to Vault</span>
+                  </button>
+                `}
                 <span class="text-[11px] font-medium text-stone-500 bg-[#FFF0E6] px-2.5 py-0.5 rounded-full border border-[#FED7AA]/60">
                   ${chunks.length} ${chunks.length === 1 ? 'Syllable' : 'Syllables'}
                 </span>
@@ -1862,10 +2036,22 @@ With a peaceful smile, she began to read. Her voice was steady, clear, and full 
                   <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
                   <span>Hear Word</span>
                 </button>
-                <button onclick="window.toggleSaveWordToVault('${word.replace(/'/g, "\\'")}', '${chunks.join(' / ').replace(/'/g, "\\'")}', ${chunks.length}, this)"
-                  class="save-vault-btn flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg transition border ${isWordInVault(word) ? 'bg-[#FED7AA] text-[#7C2D12] border-[#FB923C]' : 'bg-[#FFF6F0] hover:bg-[#FFEFE6] text-stone-600 hover:text-[#9A3412] border-[#F5E0D3]'}">
-                  <span>${isWordInVault(word) ? '⭐ In Vault' : '🤍 Save'}</span>
-                </button>
+                ${isWordInVault(word) ? `
+                  <span class="text-[10px] font-bold text-amber-800 bg-[#FEF3C7] border border-[#FDE68A] px-2 py-0.5 rounded-lg flex items-center gap-1">
+                    <span>⭐ Saved</span>
+                  </span>
+                  <button onclick="window.deleteWordDirectly('${word.replace(/'/g, "\\'")}')" 
+                    class="text-[10px] font-bold text-rose-700 hover:text-white bg-rose-50 hover:bg-rose-500 border border-rose-200 px-2 py-0.5 rounded-lg transition flex items-center gap-1 cursor-pointer"
+                    title="Delete this word from Ruhi's Vault">
+                    <span>🗑️ Delete</span>
+                  </button>
+                ` : `
+                  <button onclick="window.saveWordDirectly('${word.replace(/'/g, "\\'")}', '${chunks.join(' / ').replace(/'/g, "\\'")}', ${chunks.length})"
+                    class="text-[10px] font-bold text-[#9A3412] bg-[#FFF0E6] hover:bg-[#FED7AA] border border-[#FED7AA] px-2 py-0.5 rounded-lg transition shadow-2xs flex items-center gap-1 cursor-pointer"
+                    title="Save this word to Ruhi's Cloud Vault">
+                    <span>⭐ Save</span>
+                  </button>
+                `}
               </div>
               <span id="quiz-status-${wIdx}" class="text-[11px] font-semibold text-stone-400">Type missing syllable</span>
             </div>
@@ -2049,68 +2235,88 @@ With a peaceful smile, she began to read. Her voice was steady, clear, and full 
       setActiveTab('spelling');
     }
 
-
-
     // ==========================================
-    // RUHI'S CLOUD WORD VAULT (SUPABASE INTEGRATION)
+    // ⭐ VAULT MODAL DOM HANDLERS & SYNC
     // ==========================================
-    const SUPABASE_URL = 'https://qfouqxzoormcyuujkuwg.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_nTD7HEvkSt4GqEQo66SJGQ_T6ZVMBf5';
+    function renderVaultList(filterQuery = '') {
+      const container = document.getElementById('vaultListContainer');
+      if (!container) return;
 
-    let savedWordsSet = new Set();
-    let savedWordsList = [];
+      const q = filterQuery.trim().toLowerCase();
+      const filtered = q ? savedWordsList.filter(w => w.word.toLowerCase().includes(q) || (w.syllables && w.syllables.toLowerCase().includes(q))) : savedWordsList;
 
-    // Native fetch client for Supabase REST (Zero CDN dependency, ultra fast)
-    async function supabaseRequest(endpoint, method = 'GET', body = null) {
-      const headers = {
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
-        'Content-Type': 'application/json'
-      };
-      if (method === 'POST') headers['Prefer'] = 'return=representation';
-
-      const options = { method, headers };
-      if (body) options.body = JSON.stringify(body);
-
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, options);
-      if (!res.ok) {
-        const errText = await res.text();
-        throw new Error(`Supabase error (${res.status}): ${errText}`);
+      if (filtered.length === 0) {
+        if (q) {
+          container.innerHTML = `
+            <div class="text-center py-10 px-4 bg-white rounded-2xl border border-dashed border-[#FED7AA] space-y-2">
+              <span class="text-3xl">🔍</span>
+              <h3 class="text-xs font-bold text-stone-700">No words found for "${filterQuery}"</h3>
+              <p class="text-[11px] text-stone-500">Try searching for a different word.</p>
+            </div>
+          `;
+        } else {
+          container.innerHTML = `
+            <div class="text-center py-10 px-4 bg-white rounded-2xl border border-dashed border-[#FED7AA] space-y-2">
+              <span class="text-4xl">🌸</span>
+              <h3 class="text-sm font-bold text-stone-700">Your Cloud Vault is Ready!</h3>
+              <p class="text-xs text-stone-500 max-w-sm mx-auto">
+                Whenever you encounter a tricky word in Syllable Studio, click <strong>"⭐ Save to Vault"</strong> to keep it here forever.
+              </p>
+            </div>
+          `;
+        }
+        return;
       }
-      if (res.status === 204) return null;
-      return await res.json();
+
+      container.innerHTML = filtered.map(item => {
+        const dateStr = item.created_at ? new Date(item.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : 'Saved';
+        return `
+          <div class="bg-white rounded-2xl border border-[#F5E0D3] p-3.5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-[#FED7AA] transition">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="text-base font-bold text-stone-800 font-sans tracking-wide">${item.word}</span>
+                <span class="text-[10px] font-semibold text-[#9A3412] bg-[#FFF0E6] px-2 py-0.5 rounded-full border border-[#FED7AA]/60 font-mono">
+                  ${item.syllable_count || 1} ${(item.syllable_count || 1) === 1 ? 'beat' : 'beats'}
+                </span>
+              </div>
+              <div class="text-xs font-dyslexia text-[#C2410C] font-semibold tracking-wide">
+                ${item.syllables || item.word}
+              </div>
+              <div class="text-[10px] text-stone-400">
+                Saved on ${dateStr}
+              </div>
+            </div>
+            <div class="flex items-center gap-2 self-end sm:self-center">
+              <button onclick="window.speakWordFromCard('${item.word.replace(/'/g, "\\'")}')" class="p-2 rounded-xl text-stone-600 hover:text-[#9A3412] bg-[#FFF6F0] hover:bg-[#FFEFE6] border border-[#F5E0D3] transition" title="Hear word">
+                🔊
+              </button>
+              <button onclick="window.practiceWordFromVault('${item.word.replace(/'/g, "\\'")}')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-[#FFEDD5] hover:bg-[#FED7AA] text-[#9A3412] border border-[#FED7AA] transition shadow-2xs flex items-center gap-1" title="Practice in Syllable Studio">
+                <span>📖 Practice</span>
+              </button>
+              <button onclick="window.deleteWordDirectly('${item.word.replace(/'/g, "\\'")}')" class="px-2.5 py-1.5 rounded-xl text-xs font-bold text-rose-700 hover:text-white bg-rose-50 hover:bg-rose-500 border border-rose-200 transition shadow-2xs flex items-center gap-1 cursor-pointer" title="Delete from tricky words">
+                <span>🗑️ Delete</span>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
-    function isWordInVault(word) {
-      if (!word) return false;
-      return savedWordsSet.has(word.trim().toLowerCase());
+    function openVaultModal() {
+      const modal = document.getElementById('vaultModal');
+      if (!modal) return;
+      modal.classList.remove('hidden');
+      renderVaultList();
+      const searchInput = document.getElementById('vaultSearchInput');
+      if (searchInput) {
+        searchInput.value = '';
+        setTimeout(() => searchInput.focus(), 100);
+      }
     }
 
-    function updateVaultBadges() {
-      const count = savedWordsList.length;
-      const bDesktop = document.getElementById('vaultCountBadge');
-      const bMobile = document.getElementById('vaultCountBadgeMobile');
-      const bStudio = document.getElementById('studioVaultBadge');
-      const bModal = document.getElementById('vaultModalCount');
-
-      if (bDesktop) bDesktop.innerText = count;
-      if (bMobile) bMobile.innerText = count;
-      if (bStudio) bStudio.innerText = count;
-      if (bModal) bModal.innerText = `${count} ${count === 1 ? 'Word' : 'Words'}`;
-    }
-
-    function showToast(msg, icon = '✨') {
-      const toast = document.getElementById('vaultToast');
-      const toastMsg = document.getElementById('vaultToastMsg');
-      const toastIcon = document.getElementById('vaultToastIcon');
-      if (!toast) return;
-      toastMsg.innerText = msg;
-      toastIcon.innerText = icon;
-      toast.classList.remove('hidden');
-      clearTimeout(window._toastTimer);
-      window._toastTimer = setTimeout(() => {
-        toast.classList.add('hidden');
-      }, 2500);
+    function closeVaultModal() {
+      const modal = document.getElementById('vaultModal');
+      if (modal) modal.classList.add('hidden');
     }
 
     async function loadVaultWordsFromCloud() {
@@ -2144,162 +2350,6 @@ With a peaceful smile, she began to read. Her voice was steady, clear, and full 
       }
     }
 
-    async function saveWordToVault(word, syllables, syllableCount) {
-      const cleanWord = word.trim();
-      if (!cleanWord) return;
-
-      if (isWordInVault(cleanWord)) {
-        showToast(`'${cleanWord}' is already in your vault!`, '⭐');
-        return;
-      }
-
-      try {
-        const result = await supabaseRequest('ruhi_saved_words', 'POST', {
-          word: cleanWord,
-          syllables: syllables || cleanWord,
-          syllable_count: syllableCount || 1
-        });
-
-        const newItem = (Array.isArray(result) && result[0]) ? result[0] : {
-          word: cleanWord,
-          syllables: syllables || cleanWord,
-          syllable_count: syllableCount || 1,
-          created_at: new Date().toISOString()
-        };
-
-        savedWordsList.unshift(newItem);
-        savedWordsSet.add(cleanWord.toLowerCase());
-        localStorage.setItem('ruhi_vault_cache', JSON.stringify(savedWordsList));
-        updateVaultBadges();
-        renderChunkCards();
-        showToast(`✨ '${cleanWord}' saved to Ruhi's Cloud Vault!`, '⭐');
-      } catch (err) {
-        console.error('Error saving word:', err);
-        showToast(`Failed to save: ${err.message}`, '⚠️');
-      }
-    }
-
-    async function removeWordFromVault(word) {
-      const cleanWord = word.trim();
-      try {
-        await supabaseRequest(`ruhi_saved_words?word=eq.${encodeURIComponent(cleanWord)}`, 'DELETE');
-        savedWordsList = savedWordsList.filter(item => item.word.toLowerCase() !== cleanWord.toLowerCase());
-        savedWordsSet.delete(cleanWord.toLowerCase());
-        localStorage.setItem('ruhi_vault_cache', JSON.stringify(savedWordsList));
-        updateVaultBadges();
-        renderChunkCards();
-        renderVaultList();
-        showToast(`'${cleanWord}' marked as mastered! 🎉`, '✓');
-      } catch (err) {
-        console.error('Error removing word:', err);
-        showToast(`Failed to remove: ${err.message}`, '⚠️');
-      }
-    }
-
-    window.toggleSaveWordToVault = function(word, syllables, syllableCount, btnEl) {
-      if (isWordInVault(word)) {
-        if (confirm(`Remove "${word}" from Ruhi's Tricky Word Vault?`)) {
-          removeWordFromVault(word);
-        }
-      } else {
-        saveWordToVault(word, syllables, syllableCount);
-      }
-    };
-
-    window.removeWordFromVault = removeWordFromVault;
-
-    window.practiceWordFromVault = function(word) {
-      spellingInput.value = word;
-      closeVaultModal();
-      setActiveTab('spelling');
-      renderChunkCards();
-      const target = document.getElementById('spellingCardsContainer') || spellingPaper;
-      if (target) {
-        setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
-      }
-    };
-
-    function renderVaultList(filterQuery = '') {
-      const container = document.getElementById('vaultListContainer');
-      if (!container) return;
-
-      const q = filterQuery.trim().toLowerCase();
-      const filtered = q ? savedWordsList.filter(w => w.word.toLowerCase().includes(q) || (w.syllables && w.syllables.toLowerCase().includes(q))) : savedWordsList;
-
-      if (filtered.length === 0) {
-        if (q) {
-          container.innerHTML = `
-            <div class="text-center py-10 px-4 bg-white rounded-2xl border border-dashed border-[#FED7AA] space-y-2">
-              <span class="text-3xl">🔍</span>
-              <h3 class="text-xs font-bold text-stone-700">No words found for "${filterQuery}"</h3>
-              <p class="text-[11px] text-stone-500">Try searching for a different word.</p>
-            </div>
-          `;
-        } else {
-          container.innerHTML = `
-            <div class="text-center py-10 px-4 bg-white rounded-2xl border border-dashed border-[#FED7AA] space-y-2">
-              <span class="text-4xl">🌸</span>
-              <h3 class="text-sm font-bold text-stone-700">Your Cloud Vault is Ready!</h3>
-              <p class="text-xs text-stone-500 max-w-sm mx-auto">
-                Whenever you encounter a tricky word in Syllable Studio, click <strong>"🤍 Save to Vault"</strong> to keep it here forever.
-              </p>
-            </div>
-          `;
-        }
-        return;
-      }
-
-      container.innerHTML = filtered.map(item => {
-        const dateStr = item.created_at ? new Date(item.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : 'Saved';
-        return `
-          <div class="bg-white rounded-2xl border border-[#F5E0D3] p-3.5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-[#FED7AA] transition">
-            <div class="space-y-1">
-              <div class="flex items-center gap-2">
-                <span class="text-base font-bold text-stone-800 font-sans tracking-wide">${item.word}</span>
-                <span class="text-[10px] font-semibold text-[#9A3412] bg-[#FFF0E6] px-2 py-0.5 rounded-full border border-[#FED7AA]/60 font-mono">
-                  ${item.syllable_count || 1} ${(item.syllable_count || 1) === 1 ? 'beat' : 'beats'}
-                </span>
-              </div>
-              <div class="text-xs font-dyslexia text-[#C2410C] font-semibold tracking-wide">
-                ${item.syllables || item.word}
-              </div>
-              <div class="text-[10px] text-stone-400">
-                Saved on ${dateStr}
-              </div>
-            </div>
-            <div class="flex items-center gap-1.5 self-end sm:self-center">
-              <button onclick="window.speakWordFromCard('${item.word.replace(/'/g, "\\'")}')" class="p-2 rounded-xl text-stone-600 hover:text-[#9A3412] bg-[#FFF6F0] hover:bg-[#FFEFE6] border border-[#F5E0D3] transition" title="Hear word">
-                🔊
-              </button>
-              <button onclick="window.practiceWordFromVault('${item.word.replace(/'/g, "\\'")}')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-[#FFEDD5] hover:bg-[#FED7AA] text-[#9A3412] border border-[#FED7AA] transition shadow-2xs" title="Practice in Syllable Studio">
-                📖 Practice
-              </button>
-              <button onclick="if(confirm('Remove \'${item.word}\' from tricky words?')) window.removeWordFromVault('${item.word.replace(/'/g, "\\'")}')" class="p-2 rounded-xl text-stone-400 hover:text-emerald-700 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 transition" title="Mark as Mastered (Remove from tricky list)">
-                ✓
-              </button>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function openVaultModal() {
-      const modal = document.getElementById('vaultModal');
-      if (!modal) return;
-      modal.classList.remove('hidden');
-      renderVaultList();
-      const searchInput = document.getElementById('vaultSearchInput');
-      if (searchInput) {
-        searchInput.value = '';
-        setTimeout(() => searchInput.focus(), 100);
-      }
-    }
-
-    function closeVaultModal() {
-      const modal = document.getElementById('vaultModal');
-      if (modal) modal.classList.add('hidden');
-    }
-
     // Wire Vault Modal Listeners
     const openVaultBtn = document.getElementById('openVaultBtn');
     const openVaultBtnMobile = document.getElementById('openVaultBtnMobile');
@@ -2327,8 +2377,10 @@ With a peaceful smile, she began to read. Her voice was steady, clear, and full 
       });
     }
 
-    // Load initial vault words from cloud
+    // Initial Vault Load & Badge Sync
+    updateVaultBadges();
     loadVaultWordsFromCloud();
+
   </script>
 </body>
 </html>
